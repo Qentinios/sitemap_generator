@@ -10,6 +10,15 @@ class AppTests(unittest.TestCase):
         self.app = app.test_client()
 
     def test_home(self):
-        response = self.app.get('/', follow_redirects=True)
+        response = self.app.get('/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_generator(self):
+        data = {
+            'url': 'http://test.com',
+            'depth':  '1',
+            'format': 'screen'
+        }
+        response = self.app.post('/generator', json=data)
         self.assertEqual(response.status_code, 200)
 
