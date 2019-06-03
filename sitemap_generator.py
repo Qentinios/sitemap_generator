@@ -1,7 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, make_response
 
 import os
 from forms import GeneratorForm
+from generator import Generator
 
 app = Flask(__name__)
 SECRET_KEY = os.urandom(32)
@@ -16,10 +17,16 @@ def home():
 
 
 @app.route('/generator', methods=['POST'])
-def generator():
+def sitemap_generator():
     form = GeneratorForm()
 
     if form.validate_on_submit():
-        return 'valid'
+        generator = Generator(url=form.url.data, depth=int(form.depth.data))
+        sitemap = generator.generate()
+
+        if form.format.data == 'screen':
+            return make_response(jsonify(sitemap), 200)
+        else:
+            return 'file'
     else:
         return render_template('index.html', form=form)
