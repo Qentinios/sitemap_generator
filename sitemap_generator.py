@@ -9,15 +9,8 @@ SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    form = GeneratorForm()
-
-    return render_template('index.html', form=form)
-
-
-@app.route('/generator', methods=['POST'])
-def sitemap_generator():
     form = GeneratorForm()
 
     if form.validate_on_submit():
@@ -30,3 +23,4 @@ def sitemap_generator():
             return 'file'
     else:
         return render_template('index.html', form=form)
+
