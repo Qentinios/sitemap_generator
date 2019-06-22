@@ -2,8 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField
 from wtforms.validators import URL
 
-DEPTH = [(str(i), str(i) + ' level') for i in range(1, 6)]
-FORMAT = [('screen', 'Print on screen'), ('txt', 'Text file'), ('xml', 'Xml file')]
+DEPTH = [(str(i), str(i) + ' level') for i in range(1, 5)]
+FORMAT = [('screen', 'Tree'), ('txt', 'Text'), ('xml', 'Xml')]
 
 
 class GeneratorForm(FlaskForm):

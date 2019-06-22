@@ -4,12 +4,15 @@ from urllib.parse import urlparse
 
 
 class Generator:
-    def __init__(self, url, depth):
+    def __init__(self, url, depth, flat):
         parsed_url = urlparse(url)
         self.url = parsed_url.scheme + '://' + parsed_url.netloc
         self.netloc = parsed_url.netloc.lstrip('www.')
         self.depth = depth
-        self.hyperlinks_homepage = []
+        self.flat = flat
+
+        self.hyperlinks_homepage = set()
+        self.hyperlinks_set = set()
 
     def generate(self):
         level = 1
@@ -18,7 +21,12 @@ class Generator:
         self.get_hyperlinks(self.url)
 
         # build sitemap tree
-        return self.build_hyperlinks_tree(self.hyperlinks_homepage, level+1, hyperlinks_raw=False)
+        sitemap_tree = self.build_hyperlinks_tree(self.hyperlinks_homepage, level+1, hyperlinks_raw=False)
+
+        if self.flat:
+            return self.hyperlinks_set
+
+        return sitemap_tree
 
     def get_hyperlinks(self, url, level=None):
         try:
@@ -40,7 +48,8 @@ class Generator:
                 parsed_path = self.get_parsed_path(link)
 
                 if parsed_path:
-                    self.hyperlinks_homepage.append(parsed_path)
+                    self.hyperlinks_homepage.add(parsed_path)
+                    self.hyperlinks_set.add(parsed_path)
 
         return {}
 
@@ -54,6 +63,7 @@ class Generator:
 
             if parsed_path:
 
+                self.hyperlinks_set.add(parsed_path)
                 hyperlinks_tree[parsed_path] = {}
                 if level <= self.depth:
                     hyperlinks_tree[parsed_path] = self.get_hyperlinks(parsed_path, level + 1)
